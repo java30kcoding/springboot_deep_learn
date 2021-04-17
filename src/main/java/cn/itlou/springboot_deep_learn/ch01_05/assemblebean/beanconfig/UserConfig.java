@@ -1,6 +1,6 @@
-package cn.itlou.springboot_deep_learn.ch01_05.beanconfig;
+package cn.itlou.springboot_deep_learn.ch01_05.assemblebean.beanconfig;
 
-import cn.itlou.springboot_deep_learn.ch01_05.pojo.User;
+import cn.itlou.springboot_deep_learn.ch01_05.assemblebean.pojo.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

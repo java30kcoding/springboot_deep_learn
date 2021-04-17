@@ -1,4 +1,4 @@
-package cn.itlou.springboot_deep_learn.ch01_05.pojo;
+package cn.itlou.springboot_deep_learn.ch01_05.assemblebean.pojo;
 
 import lombok.Data;
 
