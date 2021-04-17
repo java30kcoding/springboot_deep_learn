@@ -64,11 +64,99 @@ public InternalResourceViewResolver setupViewResolver() {
 
 > 不要使用RestController注解
 
+## IOC容器
 
+### 定义Bean
 
+```java
+@Data
+public class User {
+    private Long id;
+    private String name;
+    private String note;
+}
+```
 
+### 定义配置类
 
+```java
+@Configuration
+public class UserConfig {
+    @Bean("user")
+    public User initUser() {
+        User user = new User();
+        user.setId(1L);
+        user.setName("yyl");
+        user.setNote("姓名");
+        return user;
+    }
+}
+```
 
+### 读取配置，装配Bean
+
+```java
+@Slf4j
+public class IocTest {
+    public static void main(String[] args) {
+        GenericApplicationContext context = new AnnotationConfigApplicationContext(UserConfig.class);
+        User user = context.getBean(User.class);
+        log.info(user.toString());
+    }
+}
+```
+
+### 其他方式装配Bean
+
+> 见scanconfig包下的代码
+
+### 排除不需要装配的Bean
+
+```java
+//使用Filter排除需要装配的Bean如果FilterType为CUSTOM，需要重写TypeFilter
+@ComponentScan(basePackages = {"cn.itlou.springboot_deep_learn.ch01_05.pojo"},
+excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {NotUseBean.class})})
+```
+
+```java
+public class MyFilterType implements TypeFilter {
+    @Override
+    public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) throws IOException {
+        if (metadataReader.getClassMetadata().getClassName().contains("Department")){
+            //获取当前类注解的信息
+            AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
+            for (String s : annotationMetadata.getAnnotationTypes()) {
+                System.out.println("当前正在被扫描的类注解类型" + s);
+            }
+            //获取当前正在扫描类的信息
+            ClassMetadata classMetadata = metadataReader.getClassMetadata();
+            System.out.println("当前正在被扫描的类的类名" + classMetadata.getClassName());
+            //获取当前类的资源信息（类存放的路径...）
+            Resource resource = metadataReader.getResource();
+            System.out.println("当前正在被扫描的类存放的地址" + resource.getURL());
+            return true;
+        }
+        // false时不装配到容器中
+        return false;
+    }
+}
+```
+
+## 依赖注入
+
+### @Autowired
+
+> 通过BeanFactory的getBean(Class<T> clz)获取装配到容器中的Bean
+
+### 同类型的Bean注入问题
+
+> NoUniqueBeanDefinitionException: No qualifying bean of type 'xx' available: expected single matching bean but found x
+
+#### 解决方案
+
++ 修改属性名为多个实现的其中一个
++ 使用@Primary或@Quelifier
++ 使用有参构造器注入(Spring官方推荐使用这种方式注入Bean，如果直接使用Autowired Idea也会警告)
 
 
 
